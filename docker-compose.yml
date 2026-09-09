@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  api:
+    image: datascientest/fastapi:1.0.0
+    container_name: api
+    ports:
+      - "8000:8000"
+
+  test_auth:
+    image: tests-image
+    container_name: test_auth
+    depends_on:
+      - api
+    environment:
+      - API_ADDRESS=api
+      - API_PORT=8000
+      - LOG=1
+    command: ["python", "tests/test_authentication.py"]
+    volumes:
+      - ./logs:/app/logs
+
+  test_authorization:
+    image: tests-image
+    container_name: test_authorization
+    depends_on:
+      - api
+    environment:
+      - API_ADDRESS=api
+      - API_PORT=8000
+      - LOG=1
+    command: ["python", "tests/test_authorization.py"]
+    volumes:
+      - ./logs:/app/logs
+
+  test_content:
+    image: tests-image
+    container_name: test_content
+    depends_on:
+      - api
+    environment:
+      - API_ADDRESS=api
+      - API_PORT=8000
+      - LOG=1
+    command: ["python", "tests/test_content.py"]
+    volumes:
+      - ./logs:/app/logs
